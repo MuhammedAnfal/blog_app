@@ -1,13 +1,15 @@
 import 'package:blog_app/core/failure/failure.dart';
 import 'package:blog_app/features/auth/data/datasource/auth_remote_data_source.dart';
 import 'package:blog_app/features/auth/domain/repository/auth_repository.dart';
-import 'package:fpdart/src/either.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:blog_app/features/auth/domain/entities/user.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource authRemoteDataSource;
   AuthRepositoryImpl({required this.authRemoteDataSource});
+
   @override
-  Future<Either<Failure, String>> logInUpWithEmailAndPassword({
+  Future<Either<Failure, User>> logInUpWithEmailAndPassword({
     required String email,
     required String password,
   }) {
@@ -16,7 +18,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, String>> signUpWithEmailAndPassword({
+  Future<Either<Failure, User>> signUpWithEmailAndPassword({
     required String name,
     required String email,
     required String password,

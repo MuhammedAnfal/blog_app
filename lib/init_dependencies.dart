@@ -29,5 +29,6 @@ void _initAuth() {
   );
 
   serviceLocator.registerCachedFactory(() => UserSignup(serviceLocator()));
+
   serviceLocator.registerLazySingleton(() => AuthBloc(userSignUp: serviceLocator()));
 }

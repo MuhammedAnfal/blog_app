@@ -1,13 +1,15 @@
+import 'package:blog_app/core/failure/failure.dart';
 import 'package:blog_app/core/failure/server_exception.dart';
+import 'package:blog_app/features/auth/data/models/user_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract interface class AuthRemoteDataSource {
-  Future<String> loginWithEmailAndPassword({
+  Future<UserModel> loginWithEmailAndPassword({
     required String name,
     required String email,
     required String password,
   });
-  Future<String> signUpWithEmailAndPassword({
+  Future<UserModel> signUpWithEmailAndPassword({
     required String name,
     required String email,
     required String password,
@@ -19,17 +21,27 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   AuthRemoteDataSourceImpl({required this.supabaseClient});
 
   @override
-  Future<String> loginWithEmailAndPassword({
-    required String name,
+  Future<UserModel> loginWithEmailAndPassword({
     required String email,
     required String password,
-  }) {
-    // TODO: implement loginWithEmailAndPassword
-    throw UnimplementedError();
+  }) async {
+    try {
+      final response = await supabaseClient.auth.signInWithPassword(
+        email: email,
+        password: password,
+      );
+      if (response.user == null) {
+        throw ServerException(message: 'User is null');
+      }
+
+      return UserModel.fromJson(response.user!.toJson());
+    } catch (e) {
+      throw ServerException(message: e.toString());
+    }
   }
 
   @override
-  Future<String> signUpWithEmailAndPassword({
+  Future<UserModel> signUpWithEmailAndPassword({
     required String name,
     required String email,
     required String password,
@@ -43,7 +55,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       if (response.user == null) {
         throw ServerException(message: 'User is Null!');
       }
-      return response.user!.id;
+      return UserModel.fromJson(response.user!.toJson());
     } catch (e) {
       throw ServerException(message: e.toString());
     }
